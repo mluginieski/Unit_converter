@@ -31,8 +31,8 @@ value, unit = converter(float,str)
 
   * Temperature:
     * Kelvin:                [K]
-    * Celsius:               [^oC]
-    * Fahrenheit:            [^oF]
+    * Degree Celsius:        [^oC]
+    * Degree Fahrenheit:     [^oF]
 
   * Voltage:
     * Volts:                 [V]
