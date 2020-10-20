@@ -13,6 +13,12 @@ The module operates receiving two string parameters. The first string correspond
     micrometer-> [mim].
   * Dimensionless is written as [.].
   
+# Example of use:
+```
+from unit_converter import converter
+value, unit = converter(float,str)
+```
+
 # Units accepted and format
   * Dimensionless:             [.]
   
