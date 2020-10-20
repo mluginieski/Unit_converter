@@ -91,5 +91,8 @@ def converter(uc_float, uc_str):
         
     if uc_str == '[F/m]':
         uc_str = '[F/m]'
+        
+    else:
+        print('This unit %s has not yet been implemented! \n' % uc_str)
 
     return uc_float, uc_str
