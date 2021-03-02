@@ -1,98 +1,69 @@
 # Version: 20201019
+# Convert units given on input to SI
+import sys
 
-def converter(uc_float, uc_str):
-    '''Convert units from imput to SI'''
-    uc_str = uc_str.replace('\n','')
-    uc_float = float(uc_float)
+def unit(u):
+    '''Corrects the string unit and give the convertion factor'''
     
-    # Dimensionless
-    if uc_str == '[.]':
-        pass
+    u = u.replace('\n','')
     
-    # Length
-    if uc_str == '[m]':
-        pass
-    
-    if uc_str == '[cm]':
-        uc_float *= 0.01
-        uc_str = '[m]'
+    # Dimensioless
+    if u == '.': return 1.0, u
 
-    if uc_str == '[mm]':
-        uc_float *= 1e-3
-        uc_str = '[m]'
-        
-    if uc_str == '[mim]':
-        uc_float *= 1e-6
-        uc_str = '[m]'
-        
-    if uc_str == '[nm]':
-        uc_float *= 1e-9
-        uc_str = '[m]'
-        
+    # Lenght
+    if u == 'm': return 1.0, u
+    if u == 'cm': u = 'm' ; return 1.0e-02, u
+    if u == 'km': u = 'm' ; return 1.0e+03, u
+    if u == 'mm': u = 'm' ; return 1.0e-03, u
+    if u == 'um': u = 'm' ; return 1.0e-06, u
+    if u == 'nm': u = 'm' ; return 1.0e-09, u
+    if u == 'Angstron': u = 'm' ; return 1.0e-10, u
+
     # Temperature
-    if uc_str == '[K]':
-        pass
-    
-    if uc_str == '[^oC]':
-        uc_float += 273.15
-        uc_str = '[K]'
-    
-    if uc_str == '[^oF]':
-        uc_float = (uc_float + 459.67)*(5/9)
-        uc_str = '[K]'
-        
+    if u == 'K': return 1.0, u
+    if u == 'oC': u = 'K' ; return 273.15, u
+    if u == 'oF': u = 'K' ; return 459.67, u
+
     # Voltage
-    if uc_str == '[V]':
-        pass
-    
-    if uc_str == '[mV]':
-        uc_float *= 1e-3
-        uc_str = '[V]'
-        
-    if uc_str == '[miV]':
-        uc_float *= 1e-6
-        uc_str = '[V]'
-        
-    if uc_str == '[nV]':
-        uc_float *= 1e-9
-        uc_str = '[V]'
-        
+    if u == 'V': return 1.0, u
+    if u == 'mV': u = 'V' ; return 1.0e-3, u
+    if u == 'uV': u = 'V' ; return 1.0e-6, u
+    if u == 'nV': u = 'V' ; return 1.0e-9, u
+
     # Charge
-    if uc_str == '[C]':
-        pass
-    
+    if u == 'C': return 1.0, u
+
     # Energy
-    if uc_str == '[J]':
-        pass
-    
-    if uc_str == '[eV]':
-        uc_float *=  1.602176634e-19
-        uc_str = '[J]'
+    if u == 'J': return 1.0, u
+    if u == 'eV': u = 'J' ; return 1.602176634e-19, u
 
     # Capacitance per unit area
-    if uc_str == '[F/m^2]':
-        pass
-    
-    if uc_str == '[F/cm^2]':
-        uc_float *= 1/0.0001
-        uc_str = '[F/m^2]'
-        
-    # Field-effect mobility
-    if uc_str == '[m^2/Vs]':
-        pass
-    
-    if uc_str == '[cm^2/Vs]':
-        uc_float *= 0.0001
-        uc_str = '[m^2/Vs]'
-        
-    # Physical constants
-    if uc_str == '[J/K]':
-        uc_str = '[J/K]'
-        
-    if uc_str == '[F/m]':
-        uc_str = '[F/m]'
-        
-    else:
-        print('This unit %s has not yet been implemented! \n' % uc_str)
+    if u == 'F/m2': return 1.0, u
+    if u == 'F/cm2': u = 'F/m2' ; return 1/1.0e-04, u
 
-    return uc_float, uc_str
+    # Field-effect mobility
+    if u == 'm2/Vs': return 1.0, u
+    if u == 'cm2/Vs': u = 'm2/Vs' ; return 1.0e-04, u
+
+    # Physical constants
+    if u == 'J/K': return 1.0, u
+
+    if u == 'F/m': return 1.0, u
+
+    else: error = 'The {} unit is not defined!'.format(u); sys.exit(error)
+
+def converter(parameters):
+
+    # Save the original unit give by user
+    u_old = parameters[2].replace('\n','')
+
+    factor, parameters[2] = unit(parameters[2])
+
+    # Calculation block of converted value
+    if u_old == 'oC': parameters[1]  += factor
+    elif u_old == 'oF': parameters[1] = (parameters[1] + factor)/1.8
+    else: parameters[1] *= factor
+    
+    print('>> ',parameters[1],parameters[2])
+    
+    return parameters
