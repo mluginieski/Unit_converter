@@ -1,23 +1,19 @@
-# Version: 20201019
-# Convert units given on input to SI
+# V.20210712
+#
 import sys
 
 def unit(u):
-    '''Corrects the string unit and give the convertion factor'''
-    
-    u = u.replace('\n','')
-    
-    # Dimensioless
+    # Dimensionless
     if u == '.': return 1.0, u
 
-    # Lenght
+    # Length
     if u == 'm': return 1.0, u
     if u == 'cm': u = 'm' ; return 1.0e-02, u
     if u == 'km': u = 'm' ; return 1.0e+03, u
     if u == 'mm': u = 'm' ; return 1.0e-03, u
     if u == 'um': u = 'm' ; return 1.0e-06, u
     if u == 'nm': u = 'm' ; return 1.0e-09, u
-    if u == 'Angstron': u = 'm' ; return 1.0e-10, u
+    if u == 'Angstrom': u = 'm' ; return 1.0e-10, u
 
     # Temperature
     if u == 'K': return 1.0, u
@@ -55,15 +51,30 @@ def unit(u):
 def converter(parameters):
 
     # Save the original unit give by user
+    u_old = parameters[2].replace(' ','')
     u_old = parameters[2].replace('\n','')
+    u_old = parameters[2].replace('\t','')
 
-    factor, parameters[2] = unit(parameters[2])
-
-    # Calculation block of converted value
-    if u_old == 'oC': parameters[1]  += factor
-    elif u_old == 'oF': parameters[1] = (parameters[1] + factor)/1.8
-    else: parameters[1] *= factor
+    parameters[2] = parameters[2].replace(' ','')
+    parameters[2] = parameters[2].replace('\n','')
+    parameters[2] = parameters[2].replace('\t','')
     
+    if parameters[2] != '-':
+
+        parameters[1] = float(parameters[1])
+        factor, parameters[2] = unit(parameters[2])
+
+        # Calculation block of converted value
+        if u_old == 'oC':   parameters[1] += factor
+        elif u_old == 'oF': parameters[1]  = (parameters[1] + factor)/1.8
+        else:  parameters[1] *= factor
+
+    else:
+        if parameters[1] == 'True':
+            parameters[1] = True
+        else:
+            parameters[1] = False
+        
     print('>> ',parameters[1],parameters[2])
     
     return parameters
